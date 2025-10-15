@@ -7,9 +7,10 @@ public class Shoe {
     private ArrayList<Card> combinedDeck;
 
     public Shoe(int numDecks){
+        Deck deck = new Deck();
         numberOfDecks = numDecks;
         for (int i = 0; i < numDecks; i++) {
-            combinedDeck.addAll(Deck);
+            combinedDeck.addAll(deck.getDeck());
         }
     }
 
