@@ -2,21 +2,23 @@ import java.util.ArrayList;
 
 public class Hand {
     
-    private ArrayList<Card> singleHand;
     //list of lists, when having multiple hands with splitting
-    private ArrayList<ArrayList<Card>> handList;
+    private ArrayList<Card> hand;
 
     public Hand() {
-        singleHand = new ArrayList<Card>();
-        handList.add(singleHand);
+        hand = new ArrayList<Card>();
     }
 
     public void addCard(Card newCard) {
-        singleHand.add(newCard);
+        hand.add(newCard);
     }
 
-    //returns both hands
-    public ArrayList(splitHand() {
+    //removes the most recent given card in the hand
+    public Card popCard() {
+        return hand.remove(hand.size()-1);
+    }
 
+    public int handSize() {
+        return hand.size();
     }
 }
