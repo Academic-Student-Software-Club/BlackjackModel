@@ -1,11 +1,10 @@
 // package blackjack;
-import java.util.Comparator;
 
-public class Card implements Comparable{
+public class Card implements Comparable<Card>{
 
-    private String suit;
-    private int value;
-    private String face;
+    final String suit;
+    final int value;
+    final String face;
 
     public Card(String type, int val, String cardFace) {
         suit = type;
@@ -26,7 +25,7 @@ public class Card implements Comparable{
     }
 
     @Override
-    public int compareTo(Object obj) {
+    public int compareTo(Card obj) {
         Card other = (Card)obj;
         
         int suitCompare = suit.compareToIgnoreCase(other.suit);
@@ -41,11 +40,11 @@ public class Card implements Comparable{
 
     private double getSortValue() {
         if (face == null) return value; // regular numbers
-        switch (face.toLowerCase()) {
-            case "jack": return 10.1;
-            case "queen": return 10.2;
-            case "king": return 10.3;
-            default: return value; // fallback
-        }
+        return switch (face.toLowerCase()) {
+            case "jack" -> 10.1;
+            case "queen" -> 10.2;
+            case "king" -> 10.3;
+            default -> value;
+        };
     }
 }
