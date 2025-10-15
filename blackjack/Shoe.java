@@ -1,7 +1,5 @@
-package blackjack;
-import java.awt.desktop.PrintFilesHandler;
 import java.util.ArrayList;
-import java.util.Random;
+// import java.util.Random;
 
 public class Shoe {
     

@@ -1,14 +1,13 @@
-package blackjack;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Deck {
     
-    private ArrayList<Card> deck;
+    final ArrayList<Card> deck;
 
     public Deck() {
 
-        deck = new ArrayList<Card>();
+        deck = new ArrayList<>();
 
         String suits[] = {"spade", "heart", "club", "diamond"};
         String faces[] = {"jack", "queen", "king"};
