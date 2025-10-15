@@ -21,4 +21,8 @@ public class Hand {
     public int handSize() {
         return hand.size();
     }
+
+    public void clearHand() {
+        hand.clear();
+    }
 }
