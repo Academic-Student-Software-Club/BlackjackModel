@@ -24,6 +24,14 @@ public class Card implements Comparable<Card>{
         return face;
     }
 
+    public void displayCard() {
+        if (face != null) {
+            System.out.println(face + " of " + suit + "s");
+        } else {
+            System.out.println(value + " of " + suit +"s");
+        }  
+    }
+
     @Override
     public int compareTo(Card obj) {
         Card other = (Card)obj;
