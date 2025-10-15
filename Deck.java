@@ -1,7 +1,6 @@
 // package BlackjackModel;
 
 import java.util.ArrayList;
-import java.lang.Math;
 
 public class Deck {
     
@@ -15,12 +14,8 @@ public class Deck {
         }
     }
 
-    //testing function, should be initialized in "Shoe" class though
-    public void drawCard() {
-        return;
+    public ArrayList<Card> getDeck() {
+        return deck;
     }
-
-    public static void main(String[] args) {
-        Deck deck = new Deck();
-    }
+    
 }
