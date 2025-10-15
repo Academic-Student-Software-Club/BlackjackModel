@@ -45,6 +45,8 @@ public class Card implements Comparable{
             case "queen": return 10.2;
             case "king": return 10.3;
             default: return value; // fallback
+        }
     }
-}
+
+    
 }

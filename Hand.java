@@ -2,7 +2,6 @@ import java.util.ArrayList;
 
 public class Hand {
     
-    //list of lists, when having multiple hands with splitting
     private ArrayList<Card> hand;
 
     public Hand() {

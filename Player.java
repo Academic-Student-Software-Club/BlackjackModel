@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class Player {
 
+    //list of player's hands
     private ArrayList<Hand> handList;
 
 
