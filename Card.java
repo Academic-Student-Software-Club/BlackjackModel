@@ -1,3 +1,4 @@
+package BlackjackModel;
 public class Card {
 
     private String suit;
@@ -7,5 +8,4 @@ public class Card {
         suit = type;
         value = val;
     }
-    
 }
