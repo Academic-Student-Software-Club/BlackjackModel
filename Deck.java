@@ -3,9 +3,12 @@ import java.util.ArrayList;
 
 public class Deck {
     
-    public ArrayList<Card> deck;
+    private ArrayList<Card> deck;
 
     public Deck() {
+
+        deck = new ArrayList<Card>();
+
         String suits[] = {"spade", "heart", "club", "diamond"};
         for (int i = 0; i < 52; i += 1) {
             Card newCard = new Card(suits[i%4], i%4+1);
@@ -16,5 +19,16 @@ public class Deck {
     public ArrayList<Card> getDeck() {
         return deck;
     }
-    
+
+    public void printDeck() {
+        for (Card i: deck) {
+            System.out.println(i.getVal() + " of " + i.getSuit() +"s");
+        }
+    }
+
+    public static void main(String[] args) {
+        Deck deck = new Deck();
+        deck.printDeck();
+    }
+
 }

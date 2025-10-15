@@ -8,11 +8,11 @@ public class Shoe {
     private  ArrayList<Card> combinedDeck;
 
     public Shoe(int numDecks){
-        Deck deck = new Deck();
-        numberOfDecks = numDecks;
-        for (int i = 0; i < numDecks; i++) {
-            combinedDeck.addAll(deck.getDeck());
-        }
+        // Deck deck = new Deck();
+        // numberOfDecks = numDecks;
+        // for (int i = 0; i < numDecks; i++) {
+        //     combinedDeck.addAll(deck.getDeck());
+        // }
     }
 
     public ArrayList<Card> getShoe() {
@@ -32,8 +32,11 @@ public class Shoe {
     }
 
     public static void main(String[] args) {
-        Shoe shoe = new Shoe(6);
-        shoe.displayShoe(shoe.getShoe());
+        // Shoe shoe = new Shoe(6);
+        // shoe.displayShoe(shoe.getShoe());
+
+        Deck deck = new Deck();
+        deck.getDeck();
     }
 
 }
