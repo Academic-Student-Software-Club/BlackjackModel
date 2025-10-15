@@ -1,5 +1,9 @@
+package blackjack;
 import java.util.ArrayList;
 import java.util.Collections;
+
+// make sure you're cd'd into BlackjackModel file first...
+// java -cp bin blackjack.Deck
 
 public class Deck {
     

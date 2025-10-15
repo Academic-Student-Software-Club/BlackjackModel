@@ -19,6 +19,21 @@ Black Jack Model
             * Suit
             * Value
 
+#### Player Logic
+- bet
+- hit
+- stand
+- split
+- double down
+
+#### Dealer Logic
+- hit
+
+#### Player Outcomes
+- win
+- push
+- lose
+
 ### Stats
 - Win rate
 - Total loss / gain
