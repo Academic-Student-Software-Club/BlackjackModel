@@ -7,4 +7,12 @@ public class Card {
         suit = type;
         value = val;
     }
+
+    public String getSuit() {
+        return suit;
+    }
+
+    public int getVal() {
+        return value;
+    }
 }

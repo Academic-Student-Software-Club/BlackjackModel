@@ -1,10 +1,11 @@
+import java.awt.desktop.PrintFilesHandler;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Shoe {
     
     private int numberOfDecks;
-    private ArrayList<Card> combinedDeck;
+    private  ArrayList<Card> combinedDeck;
 
     public Shoe(int numDecks){
         Deck deck = new Deck();
@@ -14,10 +15,25 @@ public class Shoe {
         }
     }
 
+    public ArrayList<Card> getShoe() {
+        return combinedDeck;
+    }
+
+    public void displayShoe(ArrayList<Card> shoe) {
+        for (Card i: shoe) {
+            System.out.println("Suit: " + i.getSuit() + "Val: " + i.getVal());
+        }
+    }
+
+
     // Shuffles all cards in combinedDeck
-    public void Shuffle() {
+    public void shuffle() {
         
     }
 
+    public static void main(String[] args) {
+        Shoe shoe = new Shoe(6);
+        shoe.displayShoe(shoe.getShoe());
+    }
 
 }
