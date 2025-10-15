@@ -1,11 +1,11 @@
-package BlackjackModel;
+// package BlackjackModel;
 
 import java.util.ArrayList;
 import java.lang.Math;
 
 public class Deck {
     
-    private ArrayList<Card> deck;
+    private ArrayList<Card> deck = new ArrayList<Card>();
 
     public Deck() {
         String suits[] = {"spade", "heart", "club", "diamond"};

@@ -1,4 +1,4 @@
-package BlackjackModel;
+// package BlackjackModel;
 public class Card {
 
     private String suit;
