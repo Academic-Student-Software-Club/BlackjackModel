@@ -8,12 +8,18 @@ public class Shoe {
     final int numberOfDecks;
     final ArrayList<Card> combinedDeck;
 
+    private boolean autoShuffle = true; //automatically shuffles cards when shoe is created
+
     public Shoe(int numDecks){
         Deck deck = new Deck();
         numberOfDecks = numDecks;
         combinedDeck = new ArrayList<>();
         for (int i = 0; i < numDecks; i++) {
             combinedDeck.addAll(deck.getDeck());
+        }
+
+        if (autoShuffle) {
+            shuffle();
         }
     }
 

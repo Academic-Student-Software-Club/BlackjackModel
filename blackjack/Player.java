@@ -7,10 +7,13 @@ public class Player {
     private ArrayList<Hand> handList;
     private String playerName;
     private double money;
+
+    public Player(String name) {
+        playerName = name;
+        money = 10000;
+        System.out.println("Welcome " + name + ", you current have $10,000.");
+    }
     
-
-
-
 
     //precondition: must have only 2 cards in current hand
     public void splitHand(Hand hand) {
@@ -24,8 +27,8 @@ public class Player {
         }
     }
 
-    public void setName(String name) {
-        playerName = name;
+    public void hit(int handIndex, Card card) {
+        handList.get(handIndex).addCard(card);
     }
     
 }
