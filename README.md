@@ -2,22 +2,24 @@
 A playable model of the card game blackjack, with a guide.
 ## Black Jack Model
 Black Jack Model 
-* Player Class
-* Hand Class 
-    * Bet
-    * Card list
-    * Hit
-    * Stand
-    * Double
-    * Split
-* Shoe Class 
-    * number of decks
-    * shuffle()
-    * cut()
-    * Deck 
-        * Card 
-            * Suit
-            * Value
+* [ ] Player Class
+* [ ] Hand Class 
+    * [ ] Bet
+    * [ ] Card list
+    * [ ] Hit
+    * [ ] Stand
+    * [ ] Double
+    * [ ] Split
+* [ ] Shoe Class 
+    * [X] number of decks
+    * [X] shuffle()
+    * [X] sort()
+    * [ ] cut()
+    * [X] Deck 
+      * [X] Card 
+        * [X] Suit
+        * [X] Value
+        * [X] Face
 
 #### Player Logic
 - bet
