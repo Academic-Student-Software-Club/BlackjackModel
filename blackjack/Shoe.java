@@ -8,6 +8,7 @@ public class Shoe {
     final int numberOfDecks;
     final ArrayList<Card> combinedDeck;
 
+    private int deckCut;
     private boolean autoShuffle = true; //automatically shuffles cards when shoe is created
 
     public Shoe(int numDecks){
@@ -21,6 +22,10 @@ public class Shoe {
         if (autoShuffle) {
             shuffle();
         }
+    }
+
+    public void cutDeck(int cut) {
+        deckCut = cut;
     }
 
     public ArrayList<Card> getShoe() {

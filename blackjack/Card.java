@@ -3,13 +3,22 @@ package blackjack;
 public class Card implements Comparable<Card>{
 
     final String suit;
-    final int value;
+    private int value;
     final String face;
 
     public Card(String type, int val, String cardFace) {
         suit = type;
         value = val;
         face = cardFace;
+    }
+
+    public void softenAce() {
+        if (value == 11) {
+            value = 1;
+        }
+        else {
+            System.out.println("[THIS CARD IS NOT AN ACE AND CANNOT BE SOFTENED]");
+        }
     }
 
     public String getSuit() {
@@ -26,9 +35,9 @@ public class Card implements Comparable<Card>{
 
     public void displayCard() {
         if (face != null) {
-            System.out.println(face + " of " + suit + "s");
+            System.out.print(face + " of " + suit + "s");
         } else {
-            System.out.println(value + " of " + suit +"s");
+            System.out.print(value + " of " + suit + "s");
         }  
     }
 

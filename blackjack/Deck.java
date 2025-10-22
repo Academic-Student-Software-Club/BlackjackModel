@@ -24,6 +24,9 @@ public class Deck {
             } else {
                 val = i%13+2;
             }
+            if (val == 11) {
+                face = "ace";   //[WARNING] ACE CARD IS NOW CONSIDERED A FACE CARD, CHANGE IF NEEDED
+            }
             Card newCard = new Card(suits[i%4], val, face);
             deck.add(newCard);
         }
