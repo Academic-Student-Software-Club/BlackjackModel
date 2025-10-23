@@ -9,6 +9,8 @@ public class Shoe {
     final int numberOfDecks;
     final ArrayList<Card> combinedDeck;
 
+    private int numCards;
+    private int deckCut;
     private boolean autoShuffle = true; //automatically shuffles cards when shoe is created
 
     public Shoe(int numDecks){
@@ -19,9 +21,18 @@ public class Shoe {
             combinedDeck.addAll(deck.getDeck());
         }
 
+        numCards = (numDecks * 52);
+
         if (autoShuffle) {
             shuffle();
         }
+    }
+
+    public void cutDeck(int cut) {
+        deckCut = cut;
+    }
+    public int getDeckCut() {
+        return deckCut;
     }
 
     public ArrayList<Card> getShoe() {
@@ -62,7 +73,12 @@ public class Shoe {
     }
 
     public Card draw() {
+        numCards --;
         return combinedDeck.remove(0);
+    }
+
+    public int cardsRemaining() {
+        return numCards;
     }
 
     public static void main(String[] args) {

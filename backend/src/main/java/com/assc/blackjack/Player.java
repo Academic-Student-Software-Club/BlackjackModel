@@ -10,14 +10,31 @@ public class Player {
     private double money;
 
     public Player(String name) {
+        handList = new ArrayList<Hand>();
+
         playerName = name;
         money = 10000;
-        System.out.println("Welcome " + name + ", you current have $10,000.");
+        System.out.println("Welcome " + name + ", you currently have $10,000.");
+    }
+
+    public ArrayList<Hand> getHandList() {
+        return handList;
+    }
+
+    public void addHand(double wager) {
+        Hand hand = new Hand(wager);
+        handList.add(hand);
     }
     
+    public Hand popHand() {
+        return handList.remove(handList.size()-1);
+    }
 
     //precondition: must have only 2 cards in current hand
-    public void splitHand(Hand hand) {
+    //always splits the last hand in handList
+    public void splitHand() {
+        Hand hand = handList.get(handList.size()-1);
+
         if (hand.handSize() == 2) {
             Hand newHand = new Hand();
             newHand.addCard(hand.popCard());
@@ -28,8 +45,38 @@ public class Player {
         }
     }
 
+    public boolean ableToSplit() {
+        Hand hand = handList.get(handList.size()-1);
+
+        if (hand.handSize() == 2 && hand.sameValue()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void hit(int handIndex, Card card) {
-        handList.get(handIndex).addCard(card);
+        if (handIndex == -1) {
+            handList.get(handList.size()-1).addCard(card);
+        } else {
+            handList.get(handIndex).addCard(card);
+        }
+    }
+
+    public Hand getHand(int index) {
+        if (index == -1) {
+            return handList.get(handList.size()-1);
+        } else {
+            return handList.get(index);
+        }
+    }
+
+    public int numberOfHands() {
+        return handList.size();
+    }
+
+    public double getMoney() {
+        return money;
     }
     
 }
