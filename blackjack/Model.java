@@ -4,6 +4,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.ArrayList;
 
+//TODO: player wager, payout, splitting, doubling down, insurance, surrender
+
 public class Model {
     
     public static void main(String[] args) {
@@ -16,7 +18,6 @@ public class Model {
         int numDecks = 6;
         boolean atTable = true;
         boolean blackjackEligible = true;
-        boolean changedDealerAce = false;
         boolean hasCompletelyBusted = true;
 
         Scanner scanner = new Scanner(System.in);
@@ -74,7 +75,7 @@ public class Model {
                 player.getHand(-1).printHand();
 
                 //checking for bust
-                if (player.getHand(-1).checkForBust()) {
+                if (player.getHand(-1).checkCalculateBust()) {
                     player.getHand(-1).setWin(0);
                     completedHands.add(player.popHand());
                     break;
@@ -144,13 +145,18 @@ public class Model {
             //don't even bother with the dealer if the player has already lost
             if (!hasCompletelyBusted) {
                 //deal dealer if they don't have 17
-                while (!dealerHand.has17() || ((dealerHand.getHandValue() == 17) && !changedDealerAce)) {   //FUCK this shouldn't have been this hard
+                while (dealerHand.getHandValue() <= 17 || !(dealerHand.getHandValue() > player.getBestHand().getHandValue())) {
+                    //hard 17 is the only stay conditions within the loop
+                    if (dealerHand.getHandValue() == 17 && !dealerHand.containsAce()) {
+                        break;
+                    }
+
                     System.out.println("--[dealer hits]--");
                     dealerHand.addCard(shoe.draw());
                     
-                    if (dealerHand.containsAce() && !changedDealerAce) {
-                        dealerHand.checkForBust();
-                        changedDealerAce = true;
+                    //if dealer busts but has an ace...
+                    while (dealerHand.containsAce() && dealerHand.checkForBust()) {
+                        dealerHand.softenAce();
                     }
 
                     System.out.println("Dealer hand after hit:");
@@ -159,7 +165,6 @@ public class Model {
                 System.out.println("Dealer ended with: " +  dealerHand.getHandValue());
                 System.out.println();
             }
-            hasCompletelyBusted = true;
 
             //win conditions
             for (Hand hand : completedHands) {

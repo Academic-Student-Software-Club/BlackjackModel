@@ -16,6 +16,16 @@ public class Player {
         System.out.println("Welcome " + name + ", you currently have $10,000.");
     }
 
+    public Hand getBestHand() {
+        Hand bestHand = new Hand();
+        for (Hand hand : handList) {
+            if (hand.getHandValue() > bestHand.getHandValue()) {
+                bestHand = hand;
+            }
+        }
+        return bestHand;
+    }
+
     public ArrayList<Hand> getHandList() {
         return handList;
     }

@@ -10,6 +10,7 @@ public class Hand {
 
     public Hand(double bet) {   //player hand (with wager)
         hand = new ArrayList<Card>();
+        value = 0;
         wager = bet;
     }
 
@@ -28,7 +29,8 @@ public class Hand {
         value = val;
     }
 
-    public boolean checkForBust() {
+    //if the player has an ace and busts, we bring the value of their hand down by 10
+    public boolean checkCalculateBust() {
         System.out.println(value);
         if (value > 21) {
             //check if the hand has an ace, subtracts 10 if it does
@@ -37,6 +39,13 @@ public class Hand {
                 System.out.println("ace softened, now value: " + value);
                 return false;
             }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkForBust() {
+        if (value > 21) {
             return true;
         }
         return false;
@@ -53,11 +62,20 @@ public class Hand {
     public boolean containsAce() {
         for (Card card : hand) {
             if (card.getVal() == 11) {  //changes only the first ace it sees
-                card.softenAce();
                 return true;
             }
         }
         return false;
+    }
+
+    public void softenAce() {
+        for (Card card : hand) {
+            if (card.getVal() == 11) {
+                card.setVal(1);
+                value -= 10;
+                return;
+            }
+        }
     }
 
     public void setWin(double multiplier) {

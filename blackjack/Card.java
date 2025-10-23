@@ -12,21 +12,15 @@ public class Card implements Comparable<Card>{
         face = cardFace;
     }
 
-    public void softenAce() {
-        if (value == 11) {
-            value = 1;
-        }
-        else {
-            System.out.println("[THIS CARD IS NOT AN ACE AND CANNOT BE SOFTENED]");
-        }
-    }
-
     public String getSuit() {
         return suit;
     }
 
     public int getVal() {
         return value;
+    }
+    public void setVal(int val) {
+        value = val;
     }
 
     public String getFace() {

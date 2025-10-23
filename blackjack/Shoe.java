@@ -73,7 +73,7 @@ public class Shoe {
 
     public Card draw() {
         numCards --;
-        return combinedDeck.remove(0);
+        return combinedDeck.remove(combinedDeck.size()-1);
     }
 
     public int cardsRemaining() {
