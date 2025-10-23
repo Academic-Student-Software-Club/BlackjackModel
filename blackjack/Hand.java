@@ -98,6 +98,7 @@ public class Hand {
 
     public void clearHand() {
         hand.clear();
+        value = 0;
     }
 
     public void printHand() {
@@ -110,5 +111,13 @@ public class Hand {
             }
         }
         System.out.print("]\n");
+    }
+
+    //precondition: retard
+    public void printDealer() {
+        System.out.print("[");
+        hand.get(0).displayCard();
+        System.out.println("\n(unknown)");
+        System.out.println("]");
     }
 }

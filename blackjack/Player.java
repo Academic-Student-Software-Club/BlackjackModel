@@ -16,15 +16,6 @@ public class Player {
         System.out.println("Welcome " + name + ", you currently have $10,000.");
     }
 
-    public boolean hasBustedOut() {
-        for (Hand hand : handList) {
-            if (hand.getHandValue() < 21) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public ArrayList<Hand> getHandList() {
         return handList;
     }

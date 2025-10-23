@@ -13,18 +13,22 @@ public class Model {
     public static void run() {
         System.out.println("Hello, sir. Ready to gamble?");
 
+        int numDecks = 6;
         boolean atTable = true;
         boolean blackjackEligible = true;
-        boolean dealerHasAce = false;
+        boolean changedDealerAce = false;
+        boolean hasCompletelyBusted = true;
+
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("What is your name?");
-        String playerName = scanner.nextLine();
-        Player player = new Player(playerName);
-        Shoe shoe = new Shoe(6);
+        Shoe shoe = new Shoe(numDecks);
         shoe.cutDeck(30);   //can change this to get user input and make it more immersive
         Hand dealerHand = new Hand();
         ArrayList<Hand> completedHands = new ArrayList<Hand>();
+        
+        System.out.println("What is your name?");
+        String playerName = scanner.nextLine();
+        Player player = new Player(playerName);
 
         while (atTable) {
             
@@ -61,7 +65,7 @@ public class Model {
                 if (dealerHand.handSize() == 1) {
                     dealerHand.addCard(shoe.draw());
                     System.out.println("Dealer hand:");
-                    dealerHand.printHand();
+                    dealerHand.printDealer();
                     System.out.println();
                 }
 
@@ -106,6 +110,7 @@ public class Model {
                         break;
                     case "s":
                         System.out.println("--[you stay]--");
+                        completedHands.add(player.popHand());
                         playing = false;
                         break;
                     case "v":
@@ -129,23 +134,32 @@ public class Model {
             System.out.println("Dealer hand:");
             dealerHand.printHand();
 
+            for (Hand hand : completedHands) {
+                if (hand.getHandValue() <= 21) {
+                    hasCompletelyBusted = false;
+                    break;
+                }
+            }
+
             //don't even bother with the dealer if the player has already lost
-            if (!player.hasBustedOut()) {
+            if (!hasCompletelyBusted) {
                 //deal dealer if they don't have 17
-                while (!dealerHand.has17() || ((dealerHand.getHandValue() == 17) && dealerHasAce)) {    //CAN'T FIGURE OUT THIS SHIT WHAT THE FUCK
-                    if (dealerHand.containsAce() && !dealerHasAce) {
-                        dealerHand.checkForBust();
-                        dealerHasAce = true;
-                    }
+                while (!dealerHand.has17() || ((dealerHand.getHandValue() == 17) && !changedDealerAce)) {   //FUCK this shouldn't have been this hard
                     System.out.println("--[dealer hits]--");
                     dealerHand.addCard(shoe.draw());
+                    
+                    if (dealerHand.containsAce() && !changedDealerAce) {
+                        dealerHand.checkForBust();
+                        changedDealerAce = true;
+                    }
+
                     System.out.println("Dealer hand after hit:");
                     dealerHand.printHand();
                 }
                 System.out.println("Dealer ended with: " +  dealerHand.getHandValue());
                 System.out.println();
-                dealerHasAce = false;
             }
+            hasCompletelyBusted = true;
 
             //win conditions
             for (Hand hand : completedHands) {
@@ -158,15 +172,15 @@ public class Model {
                     hand.setWin(0);
                     System.out.println("[YOU BUST]");
                 } 
-                //if you win against the dealer
-                else if (hand.getHandValue() > dealerHand.getHandValue()) {
-                    hand.setWin(2);
-                    System.out.println("[YOU WIN (beat dealer)]");
-                }
                 //if the dealer busts
                 else if (dealerHand.getHandValue() > 21) {
                     hand.setWin(2);
                     System.out.println("[YOU WIN (dealer busts)]");
+                }
+                //if you win against the dealer
+                else if (hand.getHandValue() > dealerHand.getHandValue()) {
+                    hand.setWin(2);
+                    System.out.println("[YOU WIN (beat dealer)]");
                 }
                 //if you push with the dealer
                 else if (hand.getHandValue() == dealerHand.getHandValue()) {
@@ -182,9 +196,17 @@ public class Model {
 
             //TODO: pay player
 
+            //clear the table
             completedHands.clear();
             dealerHand.clearHand();
 
+            //reached your deck cut
+            if (shoe.cardsRemaining() < shoe.getDeckCut()) {
+                System.out.println("[CHANGING SHOE]");
+                shoe = new Shoe(numDecks);
+            }
+
+            //keep playing?
             System.out.println("\nkeep playing??? [y/n]");
             String keepPlaying = scanner.nextLine();
             if (keepPlaying.equals("n")) {
