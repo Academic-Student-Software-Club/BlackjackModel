@@ -22,6 +22,7 @@ public class Model {
 
         Scanner scanner = new Scanner(System.in);
 
+        //initializing objects
         Shoe shoe = new Shoe(numDecks);
         shoe.cutDeck(30);   //can change this to get user input and make it more immersive
         Hand dealerHand = new Hand();
@@ -33,6 +34,7 @@ public class Model {
 
         while (atTable) {
             
+            //terminal user input check
             int wager = 0;
             while (wager <= 0) {
                 try {
@@ -54,11 +56,12 @@ public class Model {
             
             boolean playing = true;
 
-            //deal in
+            //deal in player
             player.addHand(wager);
             player.hit(0, shoe.draw());
             dealerHand.addCard(shoe.draw());
 
+            //main loop for player and dealer turns
             while (playing) {
                 player.hit(-1, shoe.draw());
 
@@ -88,13 +91,14 @@ public class Model {
                         completedHands.add(player.popHand());
                         break;
                     }
-                    else {  //if the player reached 21 on more than 2 cards
+                    else {  //if the player reached 21 on more than 2 cards, don't blackjack
                         completedHands.add(player.popHand());
                         break;
                     }
                 }
                 blackjackEligible = false;
 
+                //adding another hand to handList when splitting
                 System.out.print("\nhit [h], stay [s]");
                 if (player.ableToSplit()) {
                     System.out.print(", split [v]");
@@ -105,6 +109,7 @@ public class Model {
                 System.out.println("\nWhat will you do?");
                 String choice = scanner.nextLine(); 
 
+                //hit, stay, split, double
                 switch (choice) {
                     case "h":
                         System.out.println("--[you hit]--");
@@ -125,6 +130,7 @@ public class Model {
                         break;
                 }
 
+                //if all player's hands have been dealt...
                 if (player.numberOfHands() == 0) {
                     playing = false;
                 }
@@ -135,6 +141,7 @@ public class Model {
             System.out.println("Dealer hand:");
             dealerHand.printHand();
 
+            //seeing if all player hands have busted
             for (Hand hand : completedHands) {
                 if (hand.getHandValue() <= 21) {
                     hasCompletelyBusted = false;
@@ -165,6 +172,7 @@ public class Model {
                 System.out.println("Dealer ended with: " +  dealerHand.getHandValue());
                 System.out.println();
             }
+            hasCompletelyBusted = true; //resetting variable
 
             //win conditions
             for (Hand hand : completedHands) {
