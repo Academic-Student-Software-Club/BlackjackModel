@@ -1,4 +1,4 @@
-package blackjack;
+package com.assc.blackjack;
 
 public class Card implements Comparable<Card>{
 

@@ -1,4 +1,5 @@
-package blackjack;
+package com.assc.blackjack;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
