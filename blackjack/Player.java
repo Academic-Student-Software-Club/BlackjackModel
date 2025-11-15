@@ -16,6 +16,7 @@ public class Player {
         System.out.println("Welcome " + name + ", you currently have $10,000.");
     }
 
+    //checks if we even need to deal the dealer if dealerhand better than the player's best hand
     public Hand getBestHand() {
         Hand bestHand = new Hand();
         for (Hand hand : handList) {
@@ -30,8 +31,12 @@ public class Player {
         return handList;
     }
 
-    public void addHand(double wager) {
-        Hand hand = new Hand(wager);
+    public void addHand() {
+        Hand hand = new Hand();
+        handList.add(hand);
+    }
+
+    public void addHand(Hand hand) {
         handList.add(hand);
     }
     
@@ -42,12 +47,17 @@ public class Player {
     //precondition: must have only 2 cards in current hand
     //always splits the last hand in handList
     public void splitHand() {
-        Hand hand = handList.get(handList.size()-1);
+        Hand hand = getHand(-1);
 
+        System.out.println("hand.handSize() -> " + hand.handSize());
         if (hand.handSize() == 2) {
             Hand newHand = new Hand();
             newHand.addCard(hand.popCard());
             handList.add(newHand);  //creates a new hand and adds it to player's handList
+
+            hand.calculateHandValue();
+            newHand.calculateHandValue();
+            newHand.setWager(hand.getWager());
         }
         else {
             System.out.println("[HAND DID NOT SPLIT: CURRENT HANDSIZE != 2]");
@@ -64,12 +74,8 @@ public class Player {
         return false;
     }
 
-    public void hit(int handIndex, Card card) {
-        if (handIndex == -1) {
-            handList.get(handList.size()-1).addCard(card);
-        } else {
-            handList.get(handIndex).addCard(card);
-        }
+    public void hit(Card card) {
+        handList.get(handList.size()-1).addCard(card);
     }
 
     public Hand getHand(int index) {
@@ -86,6 +92,14 @@ public class Player {
 
     public double getMoney() {
         return money;
+    }
+
+    public void subtractMoney(double bet) {
+        money -= bet; 
+    }
+
+    public void payPlayer(double payout) {
+        money += payout;
     }
     
 }

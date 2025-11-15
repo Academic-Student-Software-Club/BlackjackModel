@@ -4,21 +4,35 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-//TODO: player wager, payout, splitting, doubling down, insurance, surrender
+//TODO: splitting, doubling down, insurance, surrender
+
+//splitting issues: 
+// - ends turn after you're done with only one of your splitted hands
 
 public class Model {
     
     public static void main(String[] args) {
-        run();
+        Hand playerTestHand = new Hand();  
+
+        String[] playerCards = {"3", "ace"};   //playerCards should have strings (lowercase) ex: {"1", "8", "ace", "jack"}
+        playerTestHand.artificialHand(playerCards);
+
+
+        // playerTestHand = null;  //  off/on test switch
+        run(playerTestHand);
     }
     
-    public static void run() {
-        System.out.println("Hello, sir. Ready to gamble?");
+    public static void run(Hand playerTestHand) {
+        System.out.println("Ready to gamble?");
 
         int numDecks = 6;
         boolean atTable = true;
         boolean blackjackEligible = true;
-        boolean hasCompletelyBusted = true;
+        boolean hasCompletelyBusted = true; //used for checking if we need to even deal the dealer
+        boolean dealerBlackjack = false;
+        boolean playerBlackjack = false;
+        boolean playing = true;
+        boolean isFirstDeal = true;
 
         Scanner scanner = new Scanner(System.in);
 
@@ -33,9 +47,16 @@ public class Model {
         Player player = new Player(playerName);
 
         while (atTable) {
+            //resetting variables
+            blackjackEligible = true;
+            hasCompletelyBusted = true;
+            dealerBlackjack = false;
+            playerBlackjack = false;
+            playing = true;
+            isFirstDeal = true;
             
             //terminal user input check
-            int wager = 0;
+            double wager = 0;
             while (wager <= 0) {
                 try {
                     System.out.println("What is your wager?");
@@ -52,18 +73,32 @@ public class Model {
                 }
             }
             
+            //updates player's bank
+            player.subtractMoney(wager);
             System.out.println("Your bet is $" + wager + "\n");
-            
-            boolean playing = true;
 
             //deal in player
-            player.addHand(wager);
-            player.hit(0, shoe.draw());
+            if (playerTestHand == null) {
+                player.addHand();
+                player.hit(shoe.draw());
+            } else {
+                System.out.println("[USING ARTIFICIAL TESTING HAND]");  //use testing hand from main method
+                playerTestHand.reduceToTwo();
+                player.addHand(playerTestHand);
+                playerTestHand.calculateHandValue();
+            }
             dealerHand.addCard(shoe.draw());
 
-            //main loop for player and dealer turns
+
+
+            //main loop for player turn
             while (playing) {
-                player.hit(-1, shoe.draw());
+                //should automatically hit if...
+                //1. not (first deal and there is an artificial hand)
+                if (!(isFirstDeal && (playerTestHand != null)) || (isFirstDeal && (playerTestHand == null))) {
+                    player.hit(shoe.draw());
+                }
+                isFirstDeal = false;
 
                 //initially printing dealer hand (doing this in the while loop to deal the cards correctly :D )
                 if (dealerHand.handSize() == 1) {
@@ -71,10 +106,13 @@ public class Model {
                     System.out.println("Dealer hand:");
                     dealerHand.printDealer();
                     System.out.println();
+
+                    if (dealerHand.getHandValue() == 21) {
+                        dealerBlackjack = true;
+                    }
                 }
 
-                System.out.println("playerHand" + (player.numberOfHands()-1) + ":");
-
+                System.out.println("Hand " + (player.numberOfHands()) + ":");   //printing player hand
                 player.getHand(-1).printHand();
 
                 //checking for bust
@@ -85,10 +123,17 @@ public class Model {
                 }
 
                 //blackjack condition
-                if (player.getHand(-1).getHandValue() == 21) {
-                    if (blackjackEligible) {    //if the player got blackjack
+                //break out of each condition b/c player can only get blackjack with their one and only hand
+                if (player.getHand(0).getHandValue() == 21) {
+                    if (blackjackEligible && !dealerBlackjack) {    //if the player got blackjack
                         player.getHand(0).setWin(2.5);
                         completedHands.add(player.popHand());
+                        playerBlackjack = true;
+                        break;
+                    } else if (blackjackEligible && dealerBlackjack) {  //push if dealer also has blackjack
+                        player.getHand(0).setWin(1);
+                        completedHands.add(player.popHand());
+                        playerBlackjack = true;
                         break;
                     }
                     else {  //if the player reached 21 on more than 2 cards, don't blackjack
@@ -96,9 +141,9 @@ public class Model {
                         break;
                     }
                 }
-                blackjackEligible = false;
+                blackjackEligible = false;  //resetting variable b/c player only gets blackjack w/ first hand
 
-                //adding another hand to handList when splitting
+                //checking if able to split or double down
                 System.out.print("\nhit [h], stay [s]");
                 if (player.ableToSplit()) {
                     System.out.print(", split [v]");
@@ -109,29 +154,32 @@ public class Model {
                 System.out.println("\nWhat will you do?");
                 String choice = scanner.nextLine(); 
 
-                //hit, stay, split, double
-                switch (choice) {
-                    case "h":
+                boolean playerHasChosen = false;
+                while (!playerHasChosen) {  //player decision to hit, stay, split, dd
+                    playerHasChosen = true;
+                    if (choice.equals("h") || choice.equals("H")) { //HIT
                         System.out.println("--[you hit]--");
-                        break;
-                    case "s":
-                        System.out.println("--[you stay]--");
+                    } else if (choice.equals("s") || choice.equals("S")) {  //STAY
                         completedHands.add(player.popHand());
                         playing = false;
-                        break;
-                    case "v":
+                    } else if (choice.equals("v") || choice.equals("v")) {  //SPLIT
                         player.splitHand();
                         System.out.println("--[you split]--");
-                        break;
-                    case "d":
-                        wager *= 2;
+                        player.subtractMoney(wager);
+                    } else if (choice.equals("d") || choice.equals("d")) {  //DOUBLE-DOWN
                         System.out.println("--[you double down]--");
-                        player.hit(-1, shoe.draw());
-                        break;
+                        player.hit(shoe.draw());
+                        player.getHand(-1).setWager(wager*2);
+                        player.subtractMoney(wager);
+                    } else {
+                        System.out.println("you chose none of the options, type your decision again");
+                        playerHasChosen = false;
+                    }
                 }
 
                 //if all player's hands have been dealt...
                 if (player.numberOfHands() == 0) {
+                    System.out.println("player.numberOfHands() -> " + player.numberOfHands());
                     playing = false;
                 }
             }
@@ -140,6 +188,7 @@ public class Model {
 
             System.out.println("Dealer hand:");
             dealerHand.printHand();
+            System.out.println();
 
             //seeing if all player hands have busted
             for (Hand hand : completedHands) {
@@ -149,9 +198,10 @@ public class Model {
                 }
             }
 
+            //DEAL DEALER
             //don't even bother with the dealer if the player has already lost
-            if (!hasCompletelyBusted) {
-                //deal dealer if they don't have 17
+            if (!(!hasCompletelyBusted || !playerBlackjack)) {
+                //deal dealer if they don't have 17 
                 while (dealerHand.getHandValue() <= 17 || !(dealerHand.getHandValue() > player.getBestHand().getHandValue())) {
                     //hard 17 is the only stay conditions within the loop
                     if (dealerHand.getHandValue() == 17 && !dealerHand.containsAce()) {
@@ -207,7 +257,25 @@ public class Model {
                 }
             }
 
-            //TODO: pay player
+            //PAYOUT
+            //win conditions should be set by now
+            int payout = 0;
+            int netGain = 0;
+            for (Hand hand : completedHands) {
+                System.out.println("{{hand win multiplier: " + hand.getWinMultiplier() + "}}");
+                payout += (wager * hand.getWinMultiplier());
+                netGain += (wager * (hand.getWinMultiplier()-1));
+            }
+
+            player.payPlayer(payout);
+
+            if (netGain > 0) {
+                System.out.println("YOU EARNED $" + netGain + "!");
+            } else if (netGain < 0) {
+                System.out.println("RESULT: -$" + (netGain*(-1)) );
+            }
+
+            System.out.println("Current Balance = " + player.getMoney());
 
             //clear the table
             completedHands.clear();
@@ -219,20 +287,19 @@ public class Model {
                 shoe = new Shoe(numDecks);
             }
 
+            if (player.getMoney() <= 0) {
+                System.out.println("YOU ARE BANKRUPT, GET THE FUCK OUT OF THE CASINO!!!");
+                break;
+            }
+
             //keep playing?
             System.out.println("\nkeep playing??? [y/n]");
             String keepPlaying = scanner.nextLine();
-            if (keepPlaying.equals("n")) {
+            if (keepPlaying.equals("n") || keepPlaying.equals("N") || keepPlaying.equals("no") || keepPlaying.equals("No") || keepPlaying.equals("NO")) {
                 atTable = false;
             }
         }
 
         scanner.close();
-    }
-
-    public static void printHands(Player player) {
-        for (Hand hand : player.getHandList()) {
-            hand.printHand();
-        }
     }
 }

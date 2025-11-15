@@ -2,14 +2,27 @@ package blackjack;
 
 public class Card implements Comparable<Card>{
 
-    final String suit;
+    private String suit;
     private int value;
-    final String face;
+    private String face;
 
     public Card(String type, int val, String cardFace) {
         suit = type;
         value = val;
         face = cardFace;
+    }
+
+    public Card(String cardFace) {
+        suit = "heart";
+        face = cardFace;
+
+        if (cardFace.equals("ace")) {
+            value = 11;
+        } else if (cardFace.equals("jack") || cardFace.equals("queen") || cardFace.equals("king")) {
+            value = 10;
+        } else {
+            value = Integer.parseInt(cardFace);
+        }
     }
 
     public String getSuit() {

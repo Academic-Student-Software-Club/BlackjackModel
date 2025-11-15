@@ -4,29 +4,57 @@ import java.util.ArrayList;
 public class Hand {
     
     private ArrayList<Card> hand;
-    private double wager;
     private int value;
     private double winMultiplier;
+    private double wager;
 
-    public Hand(double bet) {   //player hand (with wager)
+    //used to create both player and dealer hand
+    public Hand() {
         hand = new ArrayList<Card>();
         value = 0;
-        wager = bet;
     }
 
-    public double getWinMultiplier() {
-        return winMultiplier;
+    public void setWager(double wager) {
+        this.wager = wager;
     }
-
-    public Hand() { //dealer hand
-        hand = new ArrayList<Card>();
+    public double getWager() {
+        return wager;
     }
 
     public int getHandValue() {
         return value;
     }
-    public void setHandValue(int val) {
-        value = val;
+
+    //FOR ARTIFICIAL HAND ONLY!!!
+    public void reduceToTwo() { //mainly to reset artificial hands
+        if (hand.size() > 2) {
+            ArrayList<Card> reducedHand = new ArrayList<>();
+            reducedHand.add(hand.get(0));
+            reducedHand.add(hand.get(1));
+    
+            hand = reducedHand;
+
+            //ONLY BECAUSE THIS IS ONLY FOR ARTIFICIAL HANDS THIS FUNCTION WILL HAVE TWO RESPONSIBILITIES
+
+            hardenAces();
+        }
+    }
+
+    public void hardenAces() {
+        for (Card card : hand) {
+            if (card.getVal() == 1) {
+                card.setVal(11);
+            }
+        }
+    }
+    
+    public void calculateHandValue() {  //mainly for artificial hands
+        value = 0;
+        for (Card card : hand) {
+            value += card.getVal();
+        }
+
+        System.out.println("calculateHandValue() -> " + value);
     }
 
     //if the player has an ace and busts, we bring the value of their hand down by 10
@@ -35,6 +63,7 @@ public class Hand {
         if (value > 21) {
             //check if the hand has an ace, subtracts 10 if it does
             if (containsAce()) {
+                softenAce();
                 value -= 10;
                 System.out.println("ace softened, now value: " + value);
                 return false;
@@ -72,7 +101,6 @@ public class Hand {
         for (Card card : hand) {
             if (card.getVal() == 11) {
                 card.setVal(1);
-                value -= 10;
                 return;
             }
         }
@@ -81,12 +109,8 @@ public class Hand {
     public void setWin(double multiplier) {
         winMultiplier = multiplier;
     }
-    public double getWin() {
+    public double getWinMultiplier() {
         return winMultiplier;
-    }
-
-    public double getWager() {
-        return wager;
     }
 
     //returns true if every card in the hand is the same value
@@ -135,7 +159,17 @@ public class Hand {
     public void printDealer() {
         System.out.print("[");
         hand.get(0).displayCard();
-        System.out.println("\n(unknown)");
+        System.out.print("\n(unknown)");
         System.out.println("]");
+    }
+
+
+
+    //FOR TESTING
+    public void artificialHand(String[] cards) {
+        for (String cardName : cards) {
+            Card newCard = new Card(cardName);
+            hand.add(newCard);
+        }
     }
 }
