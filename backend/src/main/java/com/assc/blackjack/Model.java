@@ -134,7 +134,7 @@ public class Model {
                 if (player.ableToSplit()) {
                     System.out.print(", split [v]");
                 }
-                if (player.getHand(-1).handSize() == 1 || player.numberOfHands() == 1) {
+                if (player.getHand(-1).handSize() == 1) {
                     System.out.print(", double down [d]");
                 }
                 System.out.println("\nWhat will you do?");
