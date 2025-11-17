@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class Player {
 
     //list of player's hands
-    private ArrayList<Hand> handList;
+    private final ArrayList<Hand> handList;
     private String playerName;
-    private double money;
+    private final double money;
 
     public Player(String name) {
-        handList = new ArrayList<Hand>();
+        handList = new ArrayList<>();
 
         playerName = name;
         money = 10000;
@@ -48,11 +48,7 @@ public class Player {
     public boolean ableToSplit() {
         Hand hand = handList.get(handList.size()-1);
 
-        if (hand.handSize() == 2 && hand.sameValue()) {
-            return true;
-        }
-
-        return false;
+        return hand.handSize() == 2 && hand.sameValue();
     }
 
     public void hit(int handIndex, Card card) {

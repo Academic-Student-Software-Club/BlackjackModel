@@ -24,7 +24,7 @@ public class Model {
         Shoe shoe = new Shoe(numDecks);
         shoe.cutDeck(30);   //can change this to get user input and make it more immersive
         Hand dealerHand = new Hand();
-        ArrayList<Hand> completedHands = new ArrayList<Hand>();
+        ArrayList<Hand> completedHands = new ArrayList<>();
         
         System.out.println("What is your name?");
         String playerName = scanner.nextLine();
