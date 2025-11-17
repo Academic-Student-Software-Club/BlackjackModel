@@ -29,7 +29,6 @@ public class Model {
         boolean dealerBlackjack = false;
         boolean playerBlackjack = false;
         boolean playing = true;
-        boolean isFirstDeal = true;
 
         Scanner scanner = new Scanner(System.in);
 
@@ -50,7 +49,6 @@ public class Model {
             dealerBlackjack = false;
             playerBlackjack = false;
             playing = true;
-            isFirstDeal = true;
             
             //terminal user input check
             double wager = 0;
