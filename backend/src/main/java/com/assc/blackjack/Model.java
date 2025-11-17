@@ -4,17 +4,14 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-//TODO: splitting, doubling down, insurance, surrender
-
-//splitting issues: 
-// - ends turn after you're done with only one of your splitted hands
+//TODO: insurance, surrender
 
 public class Model {
     
     public static void main(String[] args) {
         Hand playerTestHand = new Hand();  
 
-        String[] playerCards = {"3", "ace"};   //playerCards should have strings (lowercase) ex: {"1", "8", "ace", "jack"}
+        String[] playerCards = {"10", "10"};   //playerCards should have strings (lowercase) ex: {"1", "8", "ace", "jack"}
         playerTestHand.artificialHand(playerCards);
 
 
@@ -81,36 +78,27 @@ public class Model {
             if (playerTestHand == null) {
                 player.addHand();
                 player.hit(shoe.draw());
+                dealerHand.addCard(shoe.draw());
+                player.hit(shoe.draw());
             } else {
                 System.out.println("[USING ARTIFICIAL TESTING HAND]");  //use testing hand from main method
-                playerTestHand.reduceToTwo();
+                // playerTestHand.reduceToTwo();
                 player.addHand(playerTestHand);
                 playerTestHand.calculateHandValue();
+                dealerHand.addCard(shoe.draw());
             }
+
             dealerHand.addCard(shoe.draw());
+            System.out.println("Dealer hand:");
+            dealerHand.printDealer();
+            System.out.println();
 
-
+            if (dealerHand.getHandValue() == 21) {
+                dealerBlackjack = true;
+            }
 
             //main loop for player turn
             while (playing) {
-                //should automatically hit if...
-                //1. not (first deal and there is an artificial hand)
-                if (!(isFirstDeal && (playerTestHand != null)) || (isFirstDeal && (playerTestHand == null))) {
-                    player.hit(shoe.draw());
-                }
-                isFirstDeal = false;
-
-                //initially printing dealer hand (doing this in the while loop to deal the cards correctly :D )
-                if (dealerHand.handSize() == 1) {
-                    dealerHand.addCard(shoe.draw());
-                    System.out.println("Dealer hand:");
-                    dealerHand.printDealer();
-                    System.out.println();
-
-                    if (dealerHand.getHandValue() == 21) {
-                        dealerBlackjack = true;
-                    }
-                }
 
                 System.out.println("Hand " + (player.numberOfHands()) + ":");   //printing player hand
                 player.getHand(-1).printHand();
@@ -159,18 +147,21 @@ public class Model {
                     playerHasChosen = true;
                     if (choice.equals("h") || choice.equals("H")) { //HIT
                         System.out.println("--[you hit]--");
+                        player.hit(shoe.draw());
                     } else if (choice.equals("s") || choice.equals("S")) {  //STAY
+                        System.out.println("--[you stay]--");
                         completedHands.add(player.popHand());
-                        playing = false;
                     } else if (choice.equals("v") || choice.equals("v")) {  //SPLIT
-                        player.splitHand();
                         System.out.println("--[you split]--");
+                        player.splitHand();
                         player.subtractMoney(wager);
                     } else if (choice.equals("d") || choice.equals("d")) {  //DOUBLE-DOWN
                         System.out.println("--[you double down]--");
                         player.hit(shoe.draw());
                         player.getHand(-1).setWager(wager*2);
                         player.subtractMoney(wager);
+                        player.getHand(-1).printHand();
+                        completedHands.add(player.popHand());
                     } else {
                         System.out.println("you chose none of the options, type your decision again");
                         playerHasChosen = false;
@@ -199,8 +190,9 @@ public class Model {
             }
 
             //DEAL DEALER
-            //don't even bother with the dealer if the player has already lost
-            if (!(!hasCompletelyBusted || !playerBlackjack)) {
+            //don't even bother with the dealer if the player has already lost or they player got blackjack
+            if (!(hasCompletelyBusted || playerBlackjack)) {
+                
                 //deal dealer if they don't have 17 
                 while (dealerHand.getHandValue() <= 17 || !(dealerHand.getHandValue() > player.getBestHand().getHandValue())) {
                     //hard 17 is the only stay conditions within the loop
@@ -210,11 +202,7 @@ public class Model {
 
                     System.out.println("--[dealer hits]--");
                     dealerHand.addCard(shoe.draw());
-                    
-                    //if dealer busts but has an ace...
-                    while (dealerHand.containsAce() && dealerHand.checkForBust()) {
-                        dealerHand.softenAce();
-                    }
+                    dealerHand.checkCalculateBust();    //soften ace if the dealer busts with an 11 ace
 
                     System.out.println("Dealer hand after hit:");
                     dealerHand.printHand();
@@ -266,6 +254,9 @@ public class Model {
                 payout += (wager * hand.getWinMultiplier());
                 netGain += (wager * (hand.getWinMultiplier()-1));
             }
+
+            System.out.println(payout);
+            System.out.println(netGain);
 
             player.payPlayer(payout);
 
