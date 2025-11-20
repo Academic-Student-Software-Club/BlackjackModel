@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Model {
     
     public static void main(String[] args) {
-        Hand playerTestHand = new Hand();  
+        Hand playerTestHand = new Hand();
 
         String[] playerCards = {"10", "10"};   //playerCards should have strings (lowercase) ex: {"1", "8", "ace", "jack"}
         playerTestHand.artificialHand(playerCards);
@@ -28,13 +28,15 @@ public class Model {
         boolean hasCompletelyBusted = true; //used for checking if we need to even deal the dealer
         boolean dealerBlackjack = false;
         boolean playerBlackjack = false;
+        boolean upCardAce = false;
         boolean playing = true;
+        boolean playerHasInsurance = false;
 
         Scanner scanner = new Scanner(System.in);
 
         //initializing objects
         Shoe shoe = new Shoe(numDecks);
-        shoe.cutDeck(30);   //can change this to get user input and make it more immersive
+        shoe.cutDeck(30);   //can change this to get user input
         Hand dealerHand = new Hand();
         ArrayList<Hand> completedHands = new ArrayList<Hand>();
         
@@ -48,7 +50,9 @@ public class Model {
             hasCompletelyBusted = true;
             dealerBlackjack = false;
             playerBlackjack = false;
+            upCardAce = false;
             playing = true;
+            playerHasInsurance = false;
             
             //terminal user input check
             double wager = 0;
@@ -86,6 +90,9 @@ public class Model {
                 dealerHand.addCard(shoe.draw());
             }
 
+            player.getHand(0).setWager(wager);
+            
+            upCardAce = dealerHand.containsAce();   //check if dealer's up card is an ace for insurance
             dealerHand.addCard(shoe.draw());
             System.out.println("Dealer hand:");
             dealerHand.printDealer();
@@ -129,6 +136,22 @@ public class Model {
                 }
                 blackjackEligible = false;  //resetting variable b/c player only gets blackjack w/ first hand
 
+
+                //giving player chance for insurance
+                if (upCardAce && (player.getHandList().size() == 1) && (player.getHand(-1).handSize() == 2)) {  //if it's the first turn, give insurance
+                    System.out.println("Will you take insurance? (insurance wager will be " + Math.ceil(wager/2) + ") [y]/[n]");
+                    String insuranceDecision = scanner.nextLine();
+                    if (insuranceDecision.equals("y") || insuranceDecision.equals("Y")) {
+                        System.out.println("--[You take insurance]--");
+                        System.out.println("Insurance wager: $" + Math.ceil(wager/2));
+                        player.subtractMoney(wager/2);
+                        playerHasInsurance = true;
+                    } else if (!(insuranceDecision.equals("n") || insuranceDecision.equals("N"))) {
+                        System.out.println("Your decision was " + insuranceDecision + ", and was none of the options, type again");
+                    }
+                }
+
+
                 //checking if able to split or double down
                 System.out.print("\nhit [h], stay [s]");
                 if (player.ableToSplit()) {
@@ -149,11 +172,11 @@ public class Model {
                     } else if (choice.equals("s") || choice.equals("S")) {  //STAY
                         System.out.println("--[you stay]--");
                         completedHands.add(player.popHand());
-                    } else if (choice.equals("v") || choice.equals("v")) {  //SPLIT
+                    } else if (choice.equals("v") || choice.equals("V")) {  //SPLIT
                         System.out.println("--[you split]--");
                         player.splitHand();
                         player.subtractMoney(wager);
-                    } else if (choice.equals("d") || choice.equals("d")) {  //DOUBLE-DOWN
+                    } else if (choice.equals("d") || choice.equals("D")) {  //DOUBLE-DOWN
                         System.out.println("--[you double down]--");
                         player.hit(shoe.draw());
                         player.getHand(-1).setWager(wager*2);
@@ -245,12 +268,18 @@ public class Model {
 
             //PAYOUT
             //win conditions should be set by now
-            int payout = 0;
-            int netGain = 0;
+            double insuranceWinnings = 0;
+            if (dealerBlackjack && playerHasInsurance) {    //insurance payout
+                insuranceWinnings = wager/2;
+                System.out.println("[insurance winnings: $" + insuranceWinnings + "]");
+            }
+
+            double payout = insuranceWinnings*2;
+            double netGain = insuranceWinnings;
             for (Hand hand : completedHands) {
                 System.out.println("{{hand win multiplier: " + hand.getWinMultiplier() + "}}");
-                payout += (wager * hand.getWinMultiplier());
-                netGain += (wager * (hand.getWinMultiplier()-1));
+                payout += (hand.getWager() * hand.getWinMultiplier());
+                netGain += (hand.getWager() * (hand.getWinMultiplier()-1));
             }
 
             System.out.println(payout);
